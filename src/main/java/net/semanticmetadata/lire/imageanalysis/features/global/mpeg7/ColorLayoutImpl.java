@@ -61,9 +61,9 @@ public class ColorLayoutImpl {
 
     protected int numCCoeff = 6, numYCoeff = 21;
 
-    public int[] YCoeff = new int[numYCoeff];
-    public int[] CbCoeff = new int[numCCoeff];
-    public int[] CrCoeff = new int[numCCoeff];
+    public byte[] YCoeff = new byte[numYCoeff];
+    public byte[] CbCoeff = new byte[numCCoeff];
+    public byte[] CrCoeff = new byte[numCCoeff];
 
     // tmp vars for similarity function.
 //    int diffCb, diffCr, sumCb=0, sumCr=0, sumY=0;
@@ -170,9 +170,9 @@ public class ColorLayoutImpl {
      */
     private void init() {
         shape = new int[3][64];
-        YCoeff = new int[64];
-        CbCoeff = new int[64];
-        CrCoeff = new int[64];
+        YCoeff = new byte[64];
+        CbCoeff = new byte[64];
+        CrCoeff = new byte[64];
         colorLayoutImage = null;
         extract();
     }
@@ -353,7 +353,6 @@ public class ColorLayoutImpl {
         for (int i = 0; i < numYCoeff; i++) {
             b.append(YCoeff[i]).append(' ');
         }
-//        System.out.println("y:  " + b.toString());
     }
 
 
@@ -362,7 +361,6 @@ public class ColorLayoutImpl {
         for (int i = 0; i < numCCoeff; i++) {
             b.append(CbCoeff[i]).append(' ');
         }
-//        System.out.println("cb: " + b.toString());
     }
 
     private void setCrCoeff(int[] CrCoeff) {
@@ -401,22 +399,7 @@ public class ColorLayoutImpl {
      *
      * @return -1.0 if data is not valid.
      */
-    public static double getSimilarity(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2) {
-//        int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
-
-        //Numbers of the Coefficients of two descriptor values.
-//        numYCoeff1 = YCoeff1.length;
-//        numYCoeff2 = YCoeff2.length;
-//        CCoeff1 = CbCoeff1.length;
-//        CCoeff2 = CbCoeff2.length;
-
-        //take the minimal Coeff-number
-//        YCoeff = Math.min(numYCoeff1, numYCoeff2);
-//        CCoeff = Math.min(CCoeff1, CCoeff2);
-
-//        setWeightingValues();
-
-//        int[] sum = new int[3];
+    public static double getSimilarity(byte[] YCoeff1, byte[] CbCoeff1, byte[] CrCoeff1, byte[] YCoeff2, byte[] CbCoeff2, byte[] CrCoeff2) {
         int diffCb, diffCr, sumCb=0, sumCr=0, sumY=0;
 
         for (int j = 0; j < Math.min(YCoeff1.length, YCoeff2.length); j++) {
@@ -613,49 +596,6 @@ public class ColorLayoutImpl {
     public void setNumberOfYCoeff(int numberOfYCoeff) {
         this.numYCoeff = numberOfYCoeff;
     }
-
-
-//    public String getStringRepresentation() {
-//        StringBuilder sb = new StringBuilder(256);
-//        StringBuilder sbtmp = new StringBuilder(256);
-//        for (int i = 0; i < numYCoeff; i++) {
-//            sb.append(YCoeff[i]);
-//            if (i + 1 < numYCoeff) sb.append(' ');
-//        }
-//        sb.append("z");
-//        for (int i = 0; i < numCCoeff; i++) {
-//            sb.append(CbCoeff[i]);
-//            if (i + 1 < numCCoeff) sb.append(' ');
-//            sbtmp.append(CrCoeff[i]);
-//            if (i + 1 < numCCoeff) sbtmp.append(' ');
-//        }
-//        sb.append("z");
-//        sb.append(sbtmp);
-//        return sb.toString();
-//    }
-//
-//    public void setStringRepresentation(String descriptor) {
-//        String[] coeffs = descriptor.split("z");
-//        String[] y = coeffs[0].split(" ");
-//        String[] cb = coeffs[1].split(" ");
-//        String[] cr = coeffs[2].split(" ");
-//
-//        numYCoeff = y.length;
-//        numCCoeff = Math.min(cb.length, cr.length);
-//
-//        YCoeff = new int[numYCoeff];
-//        CbCoeff = new int[numCCoeff];
-//        CrCoeff = new int[numCCoeff];
-//
-//        for (int i = 0; i < numYCoeff; i++) {
-//            YCoeff[i] = Integer.parseInt(y[i]);
-//        }
-//        for (int i = 0; i < numCCoeff; i++) {
-//            CbCoeff[i] = Integer.parseInt(cb[i]);
-//            CrCoeff[i] = Integer.parseInt(cr[i]);
-//
-//        }
-//    }
 
     public int[] getYCoeff() {
         return YCoeff;
