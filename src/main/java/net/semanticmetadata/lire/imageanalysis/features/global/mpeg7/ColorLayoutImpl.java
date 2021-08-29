@@ -331,15 +331,15 @@ public class ColorLayoutImpl {
         Fdct(shape[1]);
         Fdct(shape[2]);
 
-        YCoeff[0] = quant_ydc(shape[0][0] >> 3) >> 1;
-        CbCoeff[0] = quant_cdc(shape[1][0] >> 3);
-        CrCoeff[0] = quant_cdc(shape[2][0] >> 3);
+        YCoeff[0] = (byte)(quant_ydc(shape[0][0] >> 3) >> 1);
+        CbCoeff[0] = (byte)quant_cdc(shape[1][0] >> 3);
+        CrCoeff[0] = (byte)quant_cdc(shape[2][0] >> 3);
 
         //quantization and zig-zagging
         for (int i = 1; i < 64; i++) {
-            YCoeff[i] = quant_ac((shape[0][(arrayZigZag[i])]) >> 1) >> 3;
-            CbCoeff[i] = quant_ac(shape[1][(arrayZigZag[i])]) >> 3;
-            CrCoeff[i] = quant_ac(shape[2][(arrayZigZag[i])]) >> 3;
+            YCoeff[i] = (byte)(quant_ac((shape[0][(arrayZigZag[i])]) >> 1) >> 3);
+            CbCoeff[i] = (byte)(quant_ac(shape[1][(arrayZigZag[i])]) >> 3);
+            CrCoeff[i] = (byte)(quant_ac(shape[2][(arrayZigZag[i])]) >> 3);
         }
 
         setYCoeff(YCoeff);
@@ -348,7 +348,7 @@ public class ColorLayoutImpl {
         return 0;
     }
 
-    private void setYCoeff(int[] YCoeff) {
+    private void setYCoeff(byte[] YCoeff) {
         StringBuilder b = new StringBuilder(256);
         for (int i = 0; i < numYCoeff; i++) {
             b.append(YCoeff[i]).append(' ');
@@ -356,14 +356,14 @@ public class ColorLayoutImpl {
     }
 
 
-    private void setCbCoeff(int[] CbCoeff) {
+    private void setCbCoeff(byte[] CbCoeff) {
         StringBuilder b = new StringBuilder(256);
         for (int i = 0; i < numCCoeff; i++) {
             b.append(CbCoeff[i]).append(' ');
         }
     }
 
-    private void setCrCoeff(int[] CrCoeff) {
+    private void setCrCoeff(byte[] CrCoeff) {
         StringBuilder b = new StringBuilder(256);
         for (int i = 0; i < numCCoeff; i++) {
             b.append(CrCoeff[i]).append(' ');
@@ -597,15 +597,15 @@ public class ColorLayoutImpl {
         this.numYCoeff = numberOfYCoeff;
     }
 
-    public int[] getYCoeff() {
+    public byte[] getYCoeff() {
         return YCoeff;
     }
 
-    public int[] getCbCoeff() {
+    public byte[] getCbCoeff() {
         return CbCoeff;
     }
 
-    public int[] getCrCoeff() {
+    public byte[] getCrCoeff() {
         return CrCoeff;
     }
 }
