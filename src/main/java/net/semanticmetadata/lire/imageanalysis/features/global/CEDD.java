@@ -111,13 +111,6 @@ public class CEDD implements GlobalFeature {
         int height = image.getHeight();
 
 
-        double[][] ImageGrid = new double[width][height];
-        double[][] PixelCount = new double[2][2];
-        int[][] ImageGridRed = new int[width][height];
-        int[][] ImageGridGreen = new int[width][height];
-        int[][] ImageGridBlue = new int[width][height];
-
-
 //please double check from here
         int NumberOfBlocks = -1;
 
@@ -155,40 +148,11 @@ public class CEDD implements GlobalFeature {
         for (int i = 0; i < 144; i++) {
             CEDD[i] = 0;
         }
-        int pixel, r, g, b;
-
-        // extraction is based on a speedup fix from Michael Riegler & Konstantin Pogorelov
-        BufferedImage image_rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
-        image_rgb.getGraphics().drawImage(image, 0, 0, null);
-        int[] pixels = ((DataBufferInt) image_rgb.getRaster().getDataBuffer()).getData();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                pixel = pixels[y * width + x];
-                b = (pixel >> 16) & 0xFF;
-                g = (pixel >> 8) & 0xFF;
-                r = (pixel) & 0xFF;
-                ImageGridRed[x][y] = r;
-                ImageGridGreen[x][y] = g;
-                ImageGridBlue[x][y] = b;
-
-                ImageGrid[x][y] = (0.114 * b + 0.587 * g + 0.299 * r);
-            }
-        }
-
-
-        int[] CororRed = new int[Step_Y * Step_X];
-        int[] CororGreen = new int[Step_Y * Step_X];
-        int[] CororBlue = new int[Step_Y * Step_X];
-
-        int[] CororRedTemp = new int[Step_Y * Step_X];
-        int[] CororGreenTemp = new int[Step_Y * Step_X];
-        int[] CororBlueTemp = new int[Step_Y * Step_X];
 
         int MeanRed, MeanGreen, MeanBlue;
 
 //plase double check from here
 
-        int TempSum = 0;
         double Max = 0;
 
         int TemoMAX_X = Step_X * (int) Math.floor(image.getWidth() >> 1);
@@ -201,6 +165,12 @@ public class CEDD implements GlobalFeature {
 
 
 //to here
+
+        BufferedImage image_rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        image_rgb.getGraphics().drawImage(image, 0, 0, null);
+        int[] pixels = ((DataBufferInt) image_rgb.getRaster().getDataBuffer()).getData();
+        int pix, r, g, b;
+        double gray;
 
         for (int y = 0; y < TemoMAX_Y; y += Step_Y) {
             for (int x = 0; x < TemoMAX_X; x += Step_X) {
@@ -220,34 +190,29 @@ public class CEDD implements GlobalFeature {
                 Edges[4] = -1;
                 Edges[5] = -1;
 
-                for (int i = 0; i < 2; i++) {
-                    for (int j = 0; j < 2; j++) {
-                        PixelCount[i][j] = 0;
-                    }
-                }
-
-                TempSum = 0;
-
                 for (int i = y; i < y + Step_Y; i++) {
                     for (int j = x; j < x + Step_X; j++) {
 
-                        CororRed[TempSum] = ImageGridRed[j][i];
-                        CororGreen[TempSum] = ImageGridGreen[j][i];
-                        CororBlue[TempSum] = ImageGridBlue[j][i];
+                        pix = pixels[i * width + j];
+                        r = (pix)       & 0xFF;
+                        g = (pix >> 8)  & 0xFF;
+                        b = (pix >> 16) & 0xFF;
+                        gray = (0.114 * b + 0.587 * g + 0.299 * r);
 
-                        CororRedTemp[TempSum] = ImageGridRed[j][i];
-                        CororGreenTemp[TempSum] = ImageGridGreen[j][i];
-                        CororBlueTemp[TempSum] = ImageGridBlue[j][i];
+                        MeanRed   += r;
+                        MeanGreen += g;
+                        MeanBlue  += b;
 
-                        TempSum++;
 
-                        if (j < (x + Step_X / 2) && i < (y + Step_Y / 2)) PixelsNeighborhood.Area1 += (ImageGrid[j][i]);
+
+                        if (j < (x + Step_X / 2) && i < (y + Step_Y / 2))
+                            PixelsNeighborhood.Area1 += gray;
                         if (j >= (x + Step_X / 2) && i < (y + Step_Y / 2))
-                            PixelsNeighborhood.Area2 += (ImageGrid[j][i]);
+                            PixelsNeighborhood.Area2 += gray;
                         if (j < (x + Step_X / 2) && i >= (y + Step_Y / 2))
-                            PixelsNeighborhood.Area3 += (ImageGrid[j][i]);
+                            PixelsNeighborhood.Area3 += gray;
                         if (j >= (x + Step_X / 2) && i >= (y + Step_Y / 2))
-                            PixelsNeighborhood.Area4 += (ImageGrid[j][i]);
+                            PixelsNeighborhood.Area4 += gray;
 
                     }
                 }
@@ -305,12 +270,6 @@ public class CEDD implements GlobalFeature {
                         Edges[T] = 5;
                     }
 
-                }
-
-                for (int i = 0; i < (Step_Y * Step_X); i++) {
-                    MeanRed += CororRed[i];
-                    MeanGreen += CororGreen[i];
-                    MeanBlue += CororBlue[i];
                 }
 
                 MeanRed = (int) (MeanRed / (Step_Y * Step_X));
